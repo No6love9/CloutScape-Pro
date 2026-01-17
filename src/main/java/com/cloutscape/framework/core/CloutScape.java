@@ -3,6 +3,9 @@ package com.cloutscape.framework.core;
 import com.cloutscape.framework.gui.CloutGUI;
 import com.cloutscape.framework.managers.*;
 import com.cloutscape.framework.humanization.AntiBanSystem;
+import com.cloutscape.framework.utils.DiscordWebhook;
+import org.dreambot.api.methods.interactive.Players;
+import org.dreambot.api.Client;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
@@ -16,7 +19,7 @@ import java.awt.*;
 @ScriptManifest(
     name = "Clout♧Scape Casino Pro",
     author = "ikingsnipe",
-    version = 1.0,
+    version = 1.1,
     description = "The definitive 2026 OSRS Casino Framework. Advanced anti-ban, multi-game support, and professional GUI.",
     category = Category.MISC
 )
@@ -28,6 +31,7 @@ public class CloutScape extends AbstractScript implements ChatListener {
     private AntiBanSystem antiBan;
     private ProfitTracker profitTracker;
     private Timer runtime;
+    private DiscordWebhook webhook;
 
     @Override
     public void onStart() {
@@ -46,9 +50,17 @@ public class CloutScape extends AbstractScript implements ChatListener {
         log("Clout♧Scape is ready.");
     }
 
+    public void initializeWebhook(String url) {
+        this.webhook = new DiscordWebhook(url);
+        this.webhook.sendEmbed("Bot Started", "Clout♧Scape is now online.", 65280, 
+            "User", Players.getLocal().getName(),
+            "World", String.valueOf(Client.getCurrentWorld()));
+    }
+
     @Override
     public int onLoop() {
         if (antiBan.shouldTakeBreak()) {
+            if (webhook != null) webhook.sendEmbed("Anti-Ban", "Taking a micro-break.", 16753920);
             antiBan.executeBreak();
             return 1000;
         }
@@ -87,9 +99,15 @@ public class CloutScape extends AbstractScript implements ChatListener {
         g.drawString("Status: " + tradeManager.getStatus(), 25, 140);
     }
 
+    public DiscordWebhook getWebhook() { return webhook; }
+    public ProfitTracker getProfitTracker() { return profitTracker; }
+
     @Override
     public void onExit() {
+        if (webhook != null) webhook.sendEmbed("Bot Stopped", "Clout♧Scape has shut down.", 16711680,
+            "Total Profit", profitTracker.getFormattedProfit(),
+            "Total Games", String.valueOf(profitTracker.getTotalGames()));
         if (gui != null) gui.dispose();
-        log("Clout♧Scape Shutting Down. Final Profit: " + profitTracker.getFormattedProfit());
+        log("Clout♧Scape Shutting Down.");
     }
 }
