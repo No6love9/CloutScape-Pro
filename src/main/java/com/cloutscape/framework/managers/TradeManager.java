@@ -14,7 +14,15 @@ public class TradeManager {
     }
 
     public void handlePendingTrades() {
-        // Logic to handle trades
+        // Logic to detect trades and switch state
+    }
+
+    public void processTrade() {
+        // Logic for active trade window
+    }
+
+    public void handlePayouts() {
+        // Logic for paying out winners
     }
 
     public void onChatMessage(Message msg) {

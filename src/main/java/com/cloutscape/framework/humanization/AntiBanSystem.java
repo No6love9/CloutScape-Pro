@@ -10,17 +10,22 @@ import java.awt.Point;
 public class AntiBanSystem {
     private long lastBreakTime = System.currentTimeMillis();
     private final long breakInterval = Calculations.random(45, 90) * 60000L;
+    private boolean onBreak = false;
 
     public boolean shouldTakeBreak() {
         return System.currentTimeMillis() - lastBreakTime > breakInterval;
     }
 
+    public boolean isOnBreak() { return onBreak; }
+
     public void executeBreak() {
+        onBreak = true;
         long duration = Calculations.random(5, 15) * 60000L;
         Logger.log("Clout♧Scape: Taking a human-like break for " + (duration / 60000) + " minutes.");
         Mouse.moveOutsideScreen();
         Sleep.sleep(duration);
         lastBreakTime = System.currentTimeMillis();
+        onBreak = false;
     }
 
     public void performPassiveActions() {

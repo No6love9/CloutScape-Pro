@@ -49,6 +49,14 @@ public class CloutGUI extends JFrame {
         startBtn.setBackground(new Color(0, 150, 0));
         startBtn.setForeground(Color.WHITE);
         startBtn.addActionListener(e -> {
+            script.getConfig().updateFromGui(
+                getWebhookUrl(), 
+                getAdMessages(), 
+                minBetField.getText(), 
+                maxBetField.getText(), 
+                "500m"
+            );
+            
             String url = getWebhookUrl();
             if (url != null && !url.isEmpty()) {
                 script.initializeWebhook(url);

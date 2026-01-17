@@ -4,6 +4,7 @@ import com.cloutscape.framework.gui.CloutGUI;
 import com.cloutscape.framework.managers.*;
 import com.cloutscape.framework.humanization.AntiBanSystem;
 import com.cloutscape.framework.utils.DiscordWebhook;
+import com.cloutscape.framework.models.CloutConfig;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.Client;
 import org.dreambot.api.script.AbstractScript;
@@ -19,13 +20,16 @@ import java.awt.*;
 @ScriptManifest(
     name = "Clout♧Scape Casino Pro",
     author = "ikingsnipe",
-    version = 1.1,
-    description = "The definitive 2026 OSRS Casino Framework. Advanced anti-ban, multi-game support, and professional GUI.",
+    version = 1.2,
+    description = "The definitive 2026 OSRS Casino Framework. State-driven logic, real-time GUI sync, and advanced humanization.",
     category = Category.MISC
 )
 public class CloutScape extends AbstractScript implements ChatListener {
 
     private CloutGUI gui;
+    private CloutConfig config;
+    private BotState currentState = BotState.INITIALIZING;
+    
     private GameManager gameManager;
     private TradeManager tradeManager;
     private AntiBanSystem antiBan;
@@ -35,7 +39,8 @@ public class CloutScape extends AbstractScript implements ChatListener {
 
     @Override
     public void onStart() {
-        log("Initializing Clout♧Scape Framework...");
+        log("Initializing Clout♧Scape Framework v1.2...");
+        config = new CloutConfig();
         runtime = new Timer();
         profitTracker = new ProfitTracker();
         antiBan = new AntiBanSystem();
@@ -47,7 +52,8 @@ public class CloutScape extends AbstractScript implements ChatListener {
             gui.setVisible(true);
         });
         
-        log("Clout♧Scape is ready.");
+        currentState = BotState.IDLE_ADVERTISING;
+        log("Clout♧Scape State: " + currentState);
     }
 
     public void initializeWebhook(String url) {
@@ -59,15 +65,38 @@ public class CloutScape extends AbstractScript implements ChatListener {
 
     @Override
     public int onLoop() {
-        if (antiBan.shouldTakeBreak()) {
-            if (webhook != null) webhook.sendEmbed("Anti-Ban", "Taking a micro-break.", 16753920);
-            antiBan.executeBreak();
-            return 1000;
-        }
+        // State Machine Logic
+        switch (currentState) {
+            case TAKING_BREAK:
+                if (!antiBan.isOnBreak()) {
+                    currentState = BotState.IDLE_ADVERTISING;
+                }
+                return 1000;
 
-        antiBan.performPassiveActions();
-        tradeManager.handlePendingTrades();
-        gameManager.processActiveGames();
+            case IDLE_ADVERTISING:
+                if (antiBan.shouldTakeBreak()) {
+                    currentState = BotState.TAKING_BREAK;
+                    if (webhook != null) webhook.sendEmbed("Anti-Ban", "Taking a micro-break.", 16753920);
+                    antiBan.executeBreak();
+                    return 1000;
+                }
+                antiBan.performPassiveActions();
+                tradeManager.handlePendingTrades();
+                // Add advertising logic here
+                break;
+
+            case HANDLING_TRADE:
+                tradeManager.processTrade();
+                break;
+
+            case PROCESSING_GAME:
+                gameManager.processActiveGames();
+                break;
+                
+            case PAYING_OUT:
+                tradeManager.handlePayouts();
+                break;
+        }
 
         return 600;
     }
@@ -84,23 +113,26 @@ public class CloutScape extends AbstractScript implements ChatListener {
 
     private void drawOverlay(Graphics2D g) {
         g.setColor(new Color(0, 0, 0, 180));
-        g.fillRoundRect(10, 30, 220, 140, 15, 15);
+        g.fillRoundRect(10, 30, 240, 160, 15, 15);
         g.setColor(new Color(0, 255, 127));
-        g.drawRoundRect(10, 30, 220, 140, 15, 15);
+        g.drawRoundRect(10, 30, 240, 160, 15, 15);
 
         g.setFont(new Font("Verdana", Font.BOLD, 14));
-        g.drawString("Clout♧Scape Pro", 25, 55);
+        g.drawString("Clout♧Scape Pro v1.2", 25, 55);
         
         g.setFont(new Font("Verdana", Font.PLAIN, 12));
         g.setColor(Color.WHITE);
         g.drawString("Runtime: " + runtime.formatTime(), 25, 80);
         g.drawString("Profit: " + profitTracker.getFormattedProfit() + " GP", 25, 100);
         g.drawString("Games: " + profitTracker.getTotalGames(), 25, 120);
-        g.drawString("Status: " + tradeManager.getStatus(), 25, 140);
+        g.drawString("State: " + currentState, 25, 140);
+        g.drawString("Status: " + tradeManager.getStatus(), 25, 160);
     }
 
+    public CloutConfig getConfig() { return config; }
     public DiscordWebhook getWebhook() { return webhook; }
     public ProfitTracker getProfitTracker() { return profitTracker; }
+    public void setState(BotState state) { this.currentState = state; }
 
     @Override
     public void onExit() {
