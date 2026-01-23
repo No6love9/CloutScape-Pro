@@ -1,1 +1,0 @@
-package org.dreambot.api.utilities; public class Sleep { public static void sleep(long ms) {} public static void sleep(int min, int max) {} public static boolean sleepUntil(java.util.function.BooleanSupplier s, int timeout) { return true; } }

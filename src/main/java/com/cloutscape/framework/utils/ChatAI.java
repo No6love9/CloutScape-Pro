@@ -1,6 +1,6 @@
 package com.cloutscape.framework.utils;
 
-import org.dreambot.api.methods.Calculations;
+import java.util.Random;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +27,7 @@ public class ChatAI {
         for (String key : RESPONSES.keySet()) {
             if (message.contains(key)) {
                 String[] options = RESPONSES.get(key);
-                return options[Calculations.random(options.length)];
+                return options[new Random().nextInt(options.length)];
             }
         }
         return null;

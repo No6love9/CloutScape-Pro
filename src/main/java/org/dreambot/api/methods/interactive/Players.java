@@ -1,1 +1,0 @@
-package org.dreambot.api.methods.interactive; import org.dreambot.api.wrappers.interactive.Player; import java.util.List; import java.util.function.Predicate; public class Players { public static Player getLocal() { return null; } public static List<Player> all(Predicate<Player> p) { return null; } }
