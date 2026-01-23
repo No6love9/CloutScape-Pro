@@ -1,4 +1,4 @@
-package com.cloutscape.plugin;
+package com.cloutscape.runelite;
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;

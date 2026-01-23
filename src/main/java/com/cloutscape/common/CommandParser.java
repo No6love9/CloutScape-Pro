@@ -1,4 +1,4 @@
-package com.cloutscape.framework.utils;
+package com.cloutscape.common;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

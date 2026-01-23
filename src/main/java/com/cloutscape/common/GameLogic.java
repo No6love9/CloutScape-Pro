@@ -1,4 +1,4 @@
-package com.cloutscape.framework.games;
+package com.cloutscape.common;
 
 import java.util.Random;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package com.cloutscape.plugin;
+package com.cloutscape.runelite;
 
 import com.google.inject.Provides;
 import javax.inject.Inject;
@@ -11,9 +11,9 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import com.cloutscape.framework.utils.CommandParser;
-import com.cloutscape.framework.utils.DiscordWebhook;
-import com.cloutscape.framework.games.GameLogic;
+import com.cloutscape.common.CommandParser;
+import com.cloutscape.common.DiscordWebhook;
+import com.cloutscape.common.GameLogic;
 
 @Slf4j
 @PluginDescriptor(

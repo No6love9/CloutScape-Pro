@@ -1,4 +1,4 @@
-package com.cloutscape.framework.utils;
+package com.cloutscape.common;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;

@@ -18,12 +18,16 @@
     <repositories>
         <repository>
             <id>runelite</id>
-            <name>RuneLite</name>
-            <url>https://repo.runelite.net</url>
+            <url>https://repo.runelite.net/</url>
+        </repository>
+        <repository>
+            <id>dreambot-repo</id>
+            <url>https://dreambot.org/repo/</url>
         </repository>
     </repositories>
 
     <dependencies>
+        <!-- RuneLite Dependencies -->
         <dependency>
             <groupId>net.runelite</groupId>
             <artifactId>runelite-api</artifactId>
@@ -36,6 +40,16 @@
             <version>${runelite.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- DreamBot Dependency (Assuming local or provided) -->
+        <dependency>
+            <groupId>org.dreambot</groupId>
+            <artifactId>client</artifactId>
+            <version>3.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Common Dependencies -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -54,16 +68,9 @@
             <version>1.7.36</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>
-        <finalName>CloutScape_RuneLite_Edition</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -71,6 +78,19 @@
                 <version>3.11.0</version>
                 <configuration>
                     <release>11</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Implementation-Title>CloutScape Pro</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
