@@ -1,6 +1,7 @@
 package com.cloutscape.framework.games;
 
 import java.util.Random;
+import java.util.Arrays;
 
 public class GameLogic {
     private final Random random = new Random();
@@ -43,29 +44,44 @@ public class GameLogic {
     }
 
     private GameResult playCraps() {
-        int roll = random.nextInt(12) + 1;
-        boolean win = (roll == 7 || roll == 9 || roll == 11);
-        return new GameResult(win, "Rolled: " + roll, win ? 2.0 : 0);
+        int d1 = random.nextInt(6) + 1;
+        int d2 = random.nextInt(6) + 1;
+        int total = d1 + d2;
+        // Official OSRS Casino Craps: 7, 9, 11 are wins
+        boolean win = (total == 7 || total == 9 || total == 11);
+        return new GameResult(win, "Rolled: " + d1 + "+" + d2 + "=" + total, win ? 2.0 : 0);
     }
 
     private GameResult playFlowerPoker() {
-        // Simplified hand evaluation logic
-        int handStrength = random.nextInt(100);
-        boolean win = handStrength > 60;
-        String hand = win ? "Full House" : "Two Pair";
-        return new GameResult(win, "Hand: " + hand, win ? 2.0 : 0);
+        String[] flowers = {"Red", "Blue", "Yellow", "Purple", "Orange", "Mixed", "Black", "White"};
+        String[] hand = new String[5];
+        for (int i = 0; i < 5; i++) hand[i] = flowers[random.nextInt(flowers.length)];
+        
+        // Simplified win logic: if there's at least a pair
+        Arrays.sort(hand);
+        boolean hasPair = false;
+        for (int i = 0; i < 4; i++) {
+            if (hand[i].equals(hand[i+1])) {
+                hasPair = true;
+                break;
+            }
+        }
+        
+        boolean win = hasPair && random.nextInt(100) > 40; // House edge
+        return new GameResult(win, "Hand: " + Arrays.toString(hand), win ? 2.0 : 0);
     }
 
     private GameResult playDiceDuel() {
         int player = random.nextInt(100) + 1;
         int host = random.nextInt(100) + 1;
+        if (player == host) return playDiceDuel(); // Reroll on tie
         boolean win = player > host;
         return new GameResult(win, "P: " + player + " vs H: " + host, win ? 2.0 : 0);
     }
 
     private GameResult playBlackjack() {
-        int player = random.nextInt(10) + 12; // 12-21
-        int dealer = random.nextInt(10) + 12;
+        int player = random.nextInt(10) + 15; // 15-24
+        int dealer = random.nextInt(10) + 15;
         boolean win = player <= 21 && (player > dealer || dealer > 21);
         return new GameResult(win, "P: " + player + " vs D: " + dealer, win ? 2.0 : 0);
     }
@@ -77,16 +93,20 @@ public class GameLogic {
     }
 
     private GameResult playHotCold() {
-        boolean isHot = random.nextBoolean();
-        boolean choice = random.nextBoolean();
-        boolean win = isHot == choice;
-        return new GameResult(win, "Result: " + (isHot ? "Hot" : "Cold"), win ? 2.0 : 0);
+        String[] options = {"Hot", "Cold"};
+        String result = options[random.nextInt(2)];
+        boolean win = random.nextBoolean(); // 50/50
+        return new GameResult(win, "Result: " + result, win ? 2.0 : 0);
     }
 
     private GameResult playDiceWar() {
-        int pSum = (random.nextInt(6)+1) + (random.nextInt(6)+1);
-        int hSum = (random.nextInt(6)+1) + (random.nextInt(6)+1);
+        int p1 = random.nextInt(6) + 1;
+        int p2 = random.nextInt(6) + 1;
+        int h1 = random.nextInt(6) + 1;
+        int h2 = random.nextInt(6) + 1;
+        int pSum = p1 + p2;
+        int hSum = h1 + h2;
         boolean win = pSum > hSum;
-        return new GameResult(win, "P: " + pSum + " vs H: " + hSum, win ? 2.0 : 0);
+        return new GameResult(win, "P: (" + p1 + "+" + p2 + ")=" + pSum + " vs H: (" + h1 + "+" + h2 + ")=" + hSum, win ? 2.0 : 0);
     }
 }

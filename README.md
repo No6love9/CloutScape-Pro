@@ -1,32 +1,30 @@
-# Clout♧Scape | Enterprise OSRS Casino Framework 2026
+# Clout♧Scape | Enterprise RuneLite Casino Plugin 2026
 
-**Clout♧Scape** is the definitive, high-tier OSRS casino automation framework designed for the modern 2026 landscape. Built with a focus on extreme sophistication, professional-grade logic, and long-term undetectability, it represents the "real deal" for serious casino operations in DreamBot.
+**Clout♧Scape** is the definitive, high-tier OSRS casino automation framework, now fully refactored as a native **RuneLite API Plugin**. Built for the modern 2026 landscape, it focuses on extreme sophistication, professional-grade logic, and seamless integration with the RuneLite client.
 
 ## 🎰 2026 Official Game Suite
 Clout♧Scape implements every modern casino game used in OSRS with official, high-fidelity logic:
-- **Official Craps**: Full implementation of the "Chasing Craps" variant with 7, 9, 12 win logic.
-- **Escalating Flower Poker**: Real-time hand evaluation with escalating payout multipliers (Pair to Rainbow).
+- **Official Craps**: Full implementation of the "Chasing Craps" variant with 7, 9, 11 win logic.
+- **Flower Poker**: Real-time hand evaluation (Pair to Rainbow).
 - **Professional Blackjack**: Automated dealer logic with house-edge optimization.
-- **Modern Variants**: 55x2, Hot/Cold, Dice Duel, and Dice War—all with configurable win chances.
+- **Modern Variants**: 55x2, Hot/Cold, Dice Duel, and Dice War—all with verified 2026 odds.
 
-## 🛡️ Advanced Anti-Ban & Humanization
-Designed for long-term, undetected play, Clout♧Scape features a proprietary humanization engine:
-- **Dynamic Micro-Breaks**: Mimics human fatigue with randomized, variable-length breaks.
-- **Camera & Mouse Jitter**: Subtle, non-robotic movements to simulate human interaction.
-- **Randomized Offsets**: Every click and movement is offset by unique, non-repeating patterns.
-- **Idle Interactions**: Engages in low-profile idle behaviors to maintain a natural presence.
+## 🛡️ Adaptive Logic & Humanization
+Refactored for RuneLite, the plugin features an **Adaptive Logic Engine**:
+- **Dynamic Response Delays**: Automatically adjusts interaction timing based on session length and activity.
+- **Native Event Handling**: Uses RuneLite's `@Subscribe` system for low-latency, reliable game state tracking.
+- **Jagex Account Ready**: Fully compatible with Jagex Account logins and secure authentication.
 
-## 💻 Professional Framework Features
-- **Compact & Extensive GUI**: A dark-themed, tabbed control panel for real-time management of all games and settings.
-- **Multi-Java Compatibility**: Fully optimized for Java 8 (DreamBot requirements), Java 21 LTS, and Java 25 LTS.
-- **Profit Tracking**: Real-time statistics on GP earned, win rates, and session performance.
-- **Automated Trade System**: Secure, anti-scam trade verification and fast payout processing.
+## 💻 RuneLite Integration Features
+- **Native Config Panel**: Manage all settings (Webhook, Bets, Jagex Account) directly through the RuneLite Configuration UI.
+- **Discord Webhooks**: Real-time session reporting and game result logging.
+- **Maven Powered**: Standardized build process using the RuneLite API.
 
 ## 🚀 Setup & Installation
-1. **Download**: Get the pre-compiled `CloutScape_Pro_2026.jar` from the releases.
-2. **Install**: Place the JAR in your DreamBot scripts folder.
-3. **Launch**: Open DreamBot, log in, and select "Clout♧Scape Casino Pro".
-4. **Configure**: Use the GUI to set your betting limits and active games before starting.
+1. **Clone**: `git clone https://github.com/No6love9/CloutScape-Pro.git`
+2. **Build**: Run `mvn clean install` to generate the plugin JAR.
+3. **Install**: Place the generated JAR in your RuneLite `plugins` directory or load it via the RuneLite development environment.
+4. **Configure**: Open the RuneLite Configuration panel, search for "CloutScape", and enter your settings.
 
 ---
 *Engineered by ikingsnipe for the elite OSRS casino operator.*
