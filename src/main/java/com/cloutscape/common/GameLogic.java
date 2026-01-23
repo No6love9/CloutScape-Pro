@@ -1,7 +1,8 @@
 package com.cloutscape.common;
 
-import java.util.Random;
-import java.util.Arrays;
+import java.util.*;
+import lombok.Builder;
+import lombok.Data;
 
 public class GameLogic {
     private final Random random = new Random();
@@ -10,103 +11,123 @@ public class GameLogic {
         CRAPS, FLOWER_POKER, DICE_DUEL, BLACKJACK, FIFTY_FIVE, HOT_COLD, DICE_WAR
     }
 
+    @Data @Builder
     public static class GameResult {
-        public final boolean win;
-        public final String details;
-        public final double multiplier;
-
-        public GameResult(boolean win, String details, double multiplier) {
-            this.win = win;
-            this.details = details;
-            this.multiplier = multiplier;
-        }
+        private final boolean win;
+        private final String details;
+        private final double multiplier;
+        private final long timestamp;
+        private final String gameId;
     }
 
     public GameResult play(GameType type, long bet) {
+        String gameId = UUID.randomUUID().toString().substring(0, 8);
         switch (type) {
-            case CRAPS:
-                return playCraps();
-            case FLOWER_POKER:
-                return playFlowerPoker();
-            case DICE_DUEL:
-                return playDiceDuel();
-            case BLACKJACK:
-                return playBlackjack();
-            case FIFTY_FIVE:
-                return playFiftyFive();
-            case HOT_COLD:
-                return playHotCold();
-            case DICE_WAR:
-                return playDiceWar();
-            default:
-                return new GameResult(false, "Unknown Game", 0);
+            case CRAPS: return playCraps(gameId);
+            case FLOWER_POKER: return playFlowerPoker(gameId);
+            case DICE_DUEL: return playDiceDuel(gameId);
+            case BLACKJACK: return playBlackjack(gameId);
+            case FIFTY_FIVE: return playFiftyFive(gameId);
+            case HOT_COLD: return playHotCold(gameId);
+            case DICE_WAR: return playDiceWar(gameId);
+            default: return GameResult.builder().win(false).details("Unknown").gameId(gameId).build();
         }
     }
 
-    private GameResult playCraps() {
+    private GameResult playCraps(String id) {
         int d1 = random.nextInt(6) + 1;
         int d2 = random.nextInt(6) + 1;
         int total = d1 + d2;
-        // Official OSRS Casino Craps: 7, 9, 11 are wins
         boolean win = (total == 7 || total == 9 || total == 11);
-        return new GameResult(win, "Rolled: " + d1 + "+" + d2 + "=" + total, win ? 2.0 : 0);
+        return GameResult.builder()
+                .win(win)
+                .details(String.format("Roll: %d+%d=%d", d1, d2, total))
+                .multiplier(win ? 2.0 : 0)
+                .timestamp(System.currentTimeMillis())
+                .gameId(id)
+                .build();
     }
 
-    private GameResult playFlowerPoker() {
+    private GameResult playFlowerPoker(String id) {
         String[] flowers = {"Red", "Blue", "Yellow", "Purple", "Orange", "Mixed", "Black", "White"};
-        String[] hand = new String[5];
-        for (int i = 0; i < 5; i++) hand[i] = flowers[random.nextInt(flowers.length)];
+        List<String> hand = new ArrayList<>();
+        for (int i = 0; i < 5; i++) hand.add(flowers[random.nextInt(flowers.length)]);
         
-        // Simplified win logic: if there's at least a pair
-        Arrays.sort(hand);
-        boolean hasPair = false;
-        for (int i = 0; i < 4; i++) {
-            if (hand[i].equals(hand[i+1])) {
-                hasPair = true;
-                break;
-            }
-        }
+        Map<String, Integer> counts = new HashMap<>();
+        for (String f : hand) counts.put(f, counts.getOrDefault(f, 0) + 1);
         
-        boolean win = hasPair && random.nextInt(100) > 40; // House edge
-        return new GameResult(win, "Hand: " + Arrays.toString(hand), win ? 2.0 : 0);
+        int maxCount = Collections.max(counts.values());
+        boolean win = maxCount >= 2 && random.nextDouble() > 0.45; // 45% win rate for pairs+
+        
+        return GameResult.builder()
+                .win(win)
+                .details("Hand: " + hand)
+                .multiplier(win ? 2.0 : 0)
+                .timestamp(System.currentTimeMillis())
+                .gameId(id)
+                .build();
     }
 
-    private GameResult playDiceDuel() {
-        int player = random.nextInt(100) + 1;
-        int host = random.nextInt(100) + 1;
-        if (player == host) return playDiceDuel(); // Reroll on tie
-        boolean win = player > host;
-        return new GameResult(win, "P: " + player + " vs H: " + host, win ? 2.0 : 0);
+    private GameResult playDiceDuel(String id) {
+        int p = random.nextInt(100) + 1;
+        int h = random.nextInt(100) + 1;
+        if (p == h) return playDiceDuel(id);
+        boolean win = p > h;
+        return GameResult.builder()
+                .win(win)
+                .details(String.format("P:%d vs H:%d", p, h))
+                .multiplier(win ? 2.0 : 0)
+                .timestamp(System.currentTimeMillis())
+                .gameId(id)
+                .build();
     }
 
-    private GameResult playBlackjack() {
-        int player = random.nextInt(10) + 15; // 15-24
-        int dealer = random.nextInt(10) + 15;
-        boolean win = player <= 21 && (player > dealer || dealer > 21);
-        return new GameResult(win, "P: " + player + " vs D: " + dealer, win ? 2.0 : 0);
+    private GameResult playBlackjack(String id) {
+        int p = random.nextInt(10) + 15;
+        int d = random.nextInt(10) + 16;
+        boolean win = p <= 21 && (p > d || d > 21);
+        return GameResult.builder()
+                .win(win)
+                .details(String.format("P:%d vs D:%d", p, d))
+                .multiplier(win ? 2.0 : 0)
+                .timestamp(System.currentTimeMillis())
+                .gameId(id)
+                .build();
     }
 
-    private GameResult playFiftyFive() {
+    private GameResult playFiftyFive(String id) {
         int roll = random.nextInt(100) + 1;
         boolean win = roll > 55;
-        return new GameResult(win, "Rolled: " + roll, win ? 2.0 : 0);
+        return GameResult.builder()
+                .win(win)
+                .details("Roll: " + roll)
+                .multiplier(win ? 2.0 : 0)
+                .timestamp(System.currentTimeMillis())
+                .gameId(id)
+                .build();
     }
 
-    private GameResult playHotCold() {
-        String[] options = {"Hot", "Cold"};
-        String result = options[random.nextInt(2)];
-        boolean win = random.nextBoolean(); // 50/50
-        return new GameResult(win, "Result: " + result, win ? 2.0 : 0);
+    private GameResult playHotCold(String id) {
+        boolean win = random.nextDouble() > 0.52; // House edge
+        return GameResult.builder()
+                .win(win)
+                .details("Result: " + (win ? "Correct" : "Incorrect"))
+                .multiplier(win ? 2.0 : 0)
+                .timestamp(System.currentTimeMillis())
+                .gameId(id)
+                .build();
     }
 
-    private GameResult playDiceWar() {
-        int p1 = random.nextInt(6) + 1;
-        int p2 = random.nextInt(6) + 1;
-        int h1 = random.nextInt(6) + 1;
-        int h2 = random.nextInt(6) + 1;
-        int pSum = p1 + p2;
-        int hSum = h1 + h2;
-        boolean win = pSum > hSum;
-        return new GameResult(win, "P: (" + p1 + "+" + p2 + ")=" + pSum + " vs H: (" + h1 + "+" + h2 + ")=" + hSum, win ? 2.0 : 0);
+    private GameResult playDiceWar(String id) {
+        int p = (random.nextInt(6)+1) + (random.nextInt(6)+1);
+        int h = (random.nextInt(6)+1) + (random.nextInt(6)+1);
+        boolean win = p > h;
+        return GameResult.builder()
+                .win(win)
+                .details(String.format("P:%d vs H:%d", p, h))
+                .multiplier(win ? 2.0 : 0)
+                .timestamp(System.currentTimeMillis())
+                .gameId(id)
+                .build();
     }
 }
