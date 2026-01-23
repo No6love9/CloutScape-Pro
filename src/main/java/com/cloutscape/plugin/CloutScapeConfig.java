@@ -45,4 +45,24 @@ public interface CloutScapeConfig extends Config {
     default int maxBet() {
         return 100000000;
     }
+
+    @ConfigItem(
+        keyName = "jagexAccount",
+        name = "Jagex Account Email",
+        description = "Email for Jagex Account login",
+        position = 5
+    )
+    default String jagexAccount() {
+        return "";
+    }
+
+    @ConfigItem(
+        keyName = "adaptiveMode",
+        name = "Adaptive Logic",
+        description = "Automatically adjust behavior based on player activity",
+        position = 6
+    )
+    default boolean adaptiveMode() {
+        return true;
+    }
 }
